@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>打地鼠游戏</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #333;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            margin: 20px;
+        }
+
+        .hole {
+            width: 100px;
+            height: 100px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .mole {
+            font-size: 50px;
+            position: absolute;
+            bottom: -60px;
+            left: 25px;
+            transition: bottom 0.3s ease-in-out;
+            user-select: none;
+        }
+
+        .mole.active {
+            bottom: 10px;
+        }
+
+        .stats {
+            margin: 10px;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <h1>打地鼠游戏</h1>
+    <div class="stats">
+        得分: <span id="score">0</span> | 
+        时间: <span id="time">30</span> 秒
+    </div>
+    <div class="game-container" id="gameContainer">
+        <!-- 地鼠洞 -->
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+    </div>
+    <button onclick="startGame()">开始游戏</button>
+
+    <!-- 音效 -->
+    <audio id="whackSound" src="whack.mp3"></audio>
+    <audio id="backgroundMusic" src="background.mp3" loop></audio>
+
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let moleInterval;
+
+        // 获取所有地鼠元素
+        const moles = document.querySelectorAll('.mole');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const whackSound = document.getElementById('whackSound');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // 随机出现地鼠
+        function popRandomMole() {
+            // 隐藏所有地鼠
+            moles.forEach(mole => mole.classList.remove('active'));
+
+            // 随机选择一个地鼠显示
+            const randomMole = moles[Math.floor(Math.random() * moles.length)];
+            randomMole.classList.add('active');
+
+            // 设置地鼠自动隐藏的时间
+            setTimeout(() => {
+                randomMole.classList.remove('active');
+            }, 1000);
+        }
+
+        // 点击地鼠得分
+        function whackMole(e) {
+            if (e.target.classList.contains('active')) {
+                score++;
+                scoreDisplay.textContent = score;
+                e.target.classList.remove('active');
+                whackSound.currentTime = 0; // 重置音效
+                whackSound.play(); // 播放点击音效
+            }
+        }
+
+        // 开始游戏
+        function startGame() {
+            resetGame();
+            backgroundMusic.play(); // 播放背景音乐
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+
+                // 时间结束
+                if (timeLeft === 0) {
+                    clearInterval(gameInterval);
+                    clearInterval(moleInterval);
+                    backgroundMusic.pause(); // 停止背景音乐
+                    alert(`游戏结束！你的得分是 ${score} 分！`);
+                }
+            }, 1000);
+
+            moleInterval = setInterval(popRandomMole, 800);
+        }
+
+        // 重置游戏
+        function resetGame() {
+            score = 0;
+            timeLeft = 30;
+            scoreDisplay.textContent = '0';
+            timeDisplay.textContent = '30';
+            clearInterval(gameInterval);
+            clearInterval(moleInterval);
+            moles.forEach(mole => mole.classList.remove('active'));
+        }
+
+        // 绑定点击事件
+        moles.forEach(mole => mole.addEventListener('click', whackMole));
+    </script>
+</body>
+</html>
