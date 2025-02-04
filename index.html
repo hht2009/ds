@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>打地鼠游戏——黄昊霆的博客</title>
     <style>
         body {
@@ -18,19 +18,20 @@
         h1 {
             margin: 20px 0;
             color: #333;
+            font-size: 24px;
         }
 
         .game-container {
             display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
             gap: 10px;
             margin: 20px;
         }
 
         .hole {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background-color: #8B4513;
             border-radius: 50%;
             position: relative;
@@ -39,10 +40,10 @@
         }
 
         .mole {
-            font-size: 50px;
+            font-size: 40px;
             position: absolute;
             bottom: -60px;
-            left: 25px;
+            left: 20px;
             transition: bottom 0.3s ease-in-out;
             user-select: none;
         }
@@ -69,6 +70,38 @@
 
         button:hover {
             background-color: #1976D2;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            .game-container {
+                grid-template-columns: repeat(3, 70px);
+                grid-template-rows: repeat(3, 70px);
+                gap: 8px;
+            }
+
+            .hole {
+                width: 70px;
+                height: 70px;
+            }
+
+            .mole {
+                font-size: 35px;
+                left: 18px;
+            }
+
+            .stats {
+                font-size: 16px;
+            }
+
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -118,10 +151,10 @@
             const randomMole = moles[Math.floor(Math.random() * moles.length)];
             randomMole.classList.add('active');
 
-            // 设置地鼠自动隐藏的时间
+            // 设置地鼠自动隐藏的时间（1.5 秒）
             setTimeout(() => {
                 randomMole.classList.remove('active');
-            }, 1000);
+            }, 1500); // 1500 毫秒 = 1.5 秒
         }
 
         // 点击地鼠得分
@@ -152,7 +185,7 @@
                 }
             }, 1000);
 
-            moleInterval = setInterval(popRandomMole, 800);
+            moleInterval = setInterval(popRandomMole, 1000); // 地鼠出现间隔调整为 1 秒
         }
 
         // 重置游戏
@@ -166,8 +199,8 @@
             moles.forEach(mole => mole.classList.remove('active'));
         }
 
-        // 绑定点击事件
-        moles.forEach(mole => mole.addEventListener('click', whackMole));
+        // 绑定点击事件（支持触屏）
+        moles.forEach(mole => mole.addEventListener('touchstart', whackMole));
     </script>
 </body>
 </html>
