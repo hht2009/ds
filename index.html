@@ -124,6 +124,7 @@
     </div>
     <button onclick="startGame()">🚀 开始游戏</button>
 
+    <!-- 音效 -->
     <audio id="whackSound" src="whack.mp3"></audio>
     <audio id="backgroundMusic" src="background.mp3" loop></audio>
 
@@ -139,6 +140,23 @@
         const whackSound = document.getElementById('whackSound');
         const backgroundMusic = document.getElementById('backgroundMusic');
 
+        // 初始化音频播放
+        function initAudio() {
+            // 确保背景音乐和点击音效都已加载
+            backgroundMusic.load();
+            whackSound.load();
+
+            // 用户交互后播放背景音乐
+            document.addEventListener('click', () => {
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play().catch(() => {
+                        console.log('背景音乐播放失败，请确保用户已与页面交互。');
+                    });
+                }
+            }, { once: true });
+        }
+
+        // 随机出现地鼠
         function popRandomMole() {
             moles.forEach(mole => mole.classList.remove('active'));
             const randomMole = moles[Math.floor(Math.random() * moles.length)];
@@ -150,19 +168,25 @@
             }, 2000); // 2000ms = 2秒
         }
 
+        // 点击地鼠得分
         function whackMole(e) {
             if (e.target.classList.contains('active')) {
                 score++;
                 scoreDisplay.textContent = score;
                 e.target.classList.remove('active');
-                whackSound.currentTime = 0;
-                whackSound.play();
+                whackSound.currentTime = 0; // 重置音效
+                whackSound.play().catch(() => {
+                    console.log('点击音效播放失败，请确保用户已与页面交互。');
+                });
             }
         }
 
+        // 开始游戏
         function startGame() {
             resetGame();
-            backgroundMusic.play();
+            backgroundMusic.play().catch(() => {
+                console.log('背景音乐播放失败，请确保用户已与页面交互。');
+            });
             gameInterval = setInterval(() => {
                 timeLeft--;
                 timeDisplay.textContent = timeLeft;
@@ -178,6 +202,7 @@
             moleInterval = setInterval(popRandomMole, 1500); // 地鼠出现间隔延长
         }
 
+        // 重置游戏
         function resetGame() {
             score = 0;
             timeLeft = 30;
@@ -188,6 +213,10 @@
             moles.forEach(mole => mole.classList.remove('active'));
         }
 
+        // 初始化音频
+        initAudio();
+
+        // 绑定点击事件
         moles.forEach(mole => mole.addEventListener('click', whackMole));
     </script>
 </body>
