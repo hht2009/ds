@@ -3,239 +3,205 @@
 <head>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#2196F3">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>打地鼠游戏——黄昊霆的博客</title>
     <style>
-        :root {
-            --primary-color: #2196F3;
-            --secondary-color: #1976D2;
-            --background: linear-gradient(45deg, #83a4d4, #b6fbff);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
-            padding: 20px;
-            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
-            background: var(--background);
-            touch-action: manipulation;
-        }
-
-        .orientation-warning {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            z-index: 100;
-        }
-
-        @media (orientation: portrait) and (max-width: 600px) {
-            .orientation-warning {
-                display: flex;
-            }
+            padding: 0;
         }
 
         h1 {
             margin: 20px 0;
-            color: #2c3e50;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            color: #333;
+            font-size: 24px;
         }
 
         .game-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 10px;
             margin: 20px;
-            max-width: 90vw;
-        }
-
-        @media (orientation: landscape) {
-            .game-container {
-                grid-template-columns: repeat(5, 1fr);
-            }
         }
 
         .hole {
             width: 80px;
             height: 80px;
-            background: #8B4513;
+            background-color: #8B4513;
             border-radius: 50%;
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
-        }
-
-        .hole:active {
-            transform: scale(0.95);
         }
 
         .mole {
+            font-size: 40px;
             position: absolute;
-            width: 60px;
-            height: 60px;
             bottom: -60px;
-            left: 10px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23A0522D" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><circle cx="9" cy="11" r="2" fill="%23ffffff"/><circle cx="15" cy="11" r="2" fill="%23ffffff"/><path fill="%23ffffff" d="M8.34 14.5c.8-1.6 2.5-2.5 4.16-2.5 1.66 0 3.36.9 4.16 2.5H8.34z"/></svg>') no-repeat center;
-            background-size: contain;
-            transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            left: 20px;
+            transition: bottom 0.3s ease-in-out;
+            user-select: none;
         }
 
         .mole.active {
             bottom: 10px;
-            animation: pop 0.3s;
-        }
-
-        @keyframes pop {
-            0% { transform: scale(0.8); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
 
         .stats {
-            font-size: 1.2rem;
-            color: #2c3e50;
-            margin: 15px 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin: 20px 0;
+            margin: 10px;
+            font-size: 18px;
         }
 
         button {
-            padding: 12px 25px;
-            font-size: 1rem;
-            background: var(--primary-color);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2196F3;
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 5px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            margin: 10px;
         }
 
         button:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+            background-color: #1976D2;
         }
 
-        button:active {
-            transform: translateY(0);
-        }
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
 
-        /* 离线提示 */
-        .offline-alert {
-            position: fixed;
-            bottom: 20px;
-            background: #ff4444;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
+            .game-container {
+                grid-template-columns: repeat(3, 70px);
+                grid-template-rows: repeat(3, 70px);
+                gap: 8px;
+            }
+
+            .hole {
+                width: 70px;
+                height: 70px;
+            }
+
+            .mole {
+                font-size: 35px;
+                left: 18px;
+            }
+
+            .stats {
+                font-size: 16px;
+            }
+
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="orientation-warning">
-        <div>请将设备旋转至横屏以获得最佳体验！</div>
-    </div>
-
     <h1>打地鼠游戏</h1>
     <div class="stats">
         得分: <span id="score">0</span> | 
         时间: <span id="time">30</span> 秒
     </div>
     <div class="game-container" id="gameContainer">
-        <!-- 动态生成地鼠洞 -->
+        <!-- 地鼠洞 -->
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
+        <div class="hole"><div class="mole">🐹</div></div>
     </div>
-    <div class="controls">
-        <button onclick="startGame()">开始游戏</button>
-        <button onclick="toggleSound()">音效: <span id="soundStatus">开</span></button>
-    </div>
-    <div class="offline-alert" id="offlineAlert">当前处于离线状态</div>
+    <button onclick="startGame()">开始游戏</button>
 
     <!-- 音效 -->
     <audio id="whackSound" src="whack.mp3"></audio>
     <audio id="backgroundMusic" src="background.mp3" loop></audio>
 
     <script>
-        // Service Worker 注册（离线支持）
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => console.log('ServiceWorker 注册成功'))
-                    .catch(err => console.log('ServiceWorker 注册失败:', err));
-            });
-        }
-
-        // 网络状态检测
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-        function updateOnlineStatus() {
-            document.getElementById('offlineAlert').style.display = 
-                navigator.onLine ? 'none' : 'block';
-        }
-
         let score = 0;
         let timeLeft = 30;
         let gameInterval;
         let moleInterval;
-        let soundEnabled = true;
 
-        // 初始化游戏界面
-        function initGameContainer() {
-            const container = document.getElementById('gameContainer');
-            container.innerHTML = '';
-            const holeCount = window.matchMedia("(orientation: landscape)").matches ? 15 : 9;
-            
-            for (let i = 0; i < holeCount; i++) {
-                const hole = document.createElement('div');
-                hole.className = 'hole';
-                hole.innerHTML = '<div class="mole"></div>';
-                hole.addEventListener('touchstart', whackMole);
-                container.appendChild(hole);
+        // 获取所有地鼠元素
+        const moles = document.querySelectorAll('.mole');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const whackSound = document.getElementById('whackSound');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // 随机出现地鼠
+        function popRandomMole() {
+            // 隐藏所有地鼠
+            moles.forEach(mole => mole.classList.remove('active'));
+
+            // 随机选择一个地鼠显示
+            const randomMole = moles[Math.floor(Math.random() * moles.length)];
+            randomMole.classList.add('active');
+
+            // 设置地鼠自动隐藏的时间（1.5 秒）
+            setTimeout(() => {
+                randomMole.classList.remove('active');
+            }, 1500); // 1500 毫秒 = 1.5 秒
+        }
+
+        // 点击地鼠得分
+        function whackMole(e) {
+            if (e.target.classList.contains('active')) {
+                score++;
+                scoreDisplay.textContent = score;
+                e.target.classList.remove('active');
+                whackSound.currentTime = 0; // 重置音效
+                whackSound.play(); // 播放点击音效
             }
         }
 
-        // 其他游戏逻辑保持原有实现...
-        // （保持之前版本的游戏逻辑代码，此处省略重复代码）
+        // 开始游戏
+        function startGame() {
+            resetGame();
+            backgroundMusic.play(); // 播放背景音乐
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
 
-        // 新增音效切换功能
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundStatus').textContent = soundEnabled ? '开' : '关';
-            whackSound.muted = !soundEnabled;
-            backgroundMusic.muted = !soundEnabled;
+                // 时间结束
+                if (timeLeft === 0) {
+                    clearInterval(gameInterval);
+                    clearInterval(moleInterval);
+                    backgroundMusic.pause(); // 停止背景音乐
+                    alert(`游戏结束！你的得分是 ${score} 分！`);
+                }
+            }, 1000);
+
+            moleInterval = setInterval(popRandomMole, 1000); // 地鼠出现间隔调整为 1 秒
         }
 
-        // 初始化游戏
-        initGameContainer();
-        updateOnlineStatus();
-        window.addEventListener('resize', initGameContainer);
+        // 重置游戏
+        function resetGame() {
+            score = 0;
+            timeLeft = 30;
+            scoreDisplay.textContent = '0';
+            timeDisplay.textContent = '30';
+            clearInterval(gameInterval);
+            clearInterval(moleInterval);
+            moles.forEach(mole => mole.classList.remove('active'));
+        }
+
+        // 绑定点击事件（支持触屏）
+        moles.forEach(mole => mole.addEventListener('touchstart', whackMole));
     </script>
 </body>
 </html>
